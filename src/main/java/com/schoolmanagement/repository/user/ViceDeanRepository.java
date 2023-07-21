@@ -1,10 +1,9 @@
 package com.schoolmanagement.repository.user;
 
-import com.schoolmanagement.entity.concretes.user.Admin;
+import com.schoolmanagement.entity.concretes.user.ViceDean;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdminRepository extends JpaRepository<Admin, Long> {
-
+public interface ViceDeanRepository extends JpaRepository<ViceDean,Long> {
     boolean existsByUsername(String username);
 
     boolean existsBySsn(String ssn);
