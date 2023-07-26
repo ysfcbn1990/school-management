@@ -10,6 +10,8 @@ public class SuccessMessages {
 
     public static final String ADMIN_DELETE="Admin is Deleted Successfully";
 
+    public static final String DEAN_SAVE = "Dean is Saved Successfully";
+
 
 
 }

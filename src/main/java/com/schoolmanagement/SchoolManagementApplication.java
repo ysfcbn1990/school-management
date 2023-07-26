@@ -44,7 +44,7 @@ public class SchoolManagementApplication implements CommandLineRunner {
 			AdminRequest adminRequest = new AdminRequest();
 			adminRequest.setUsername("Admin");
 			adminRequest.setSsn("111-11-1111");
-			//TODO password encode
+			adminRequest.setPassword("12345678");
 			adminRequest.setName("Ahmet");
 			adminRequest.setSurname("soyad");
 			adminRequest.setPhoneNumber("111-111-1111");

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class AdminController {
     private final AdminService adminService;
 
     // Not : save() *************************************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<ResponseMessage<AdminResponse>> saveAdmin(@RequestBody @Valid
                                                                     AdminRequest adminRequest){
@@ -30,6 +32,7 @@ public class AdminController {
 
 
     // Not : getAll() **********************************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("/getAllAdminsByPage") // best practice , donen nesnelerin DTO olmasidir
     public ResponseEntity<Page<Admin>> getAllAdminsByPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -42,6 +45,7 @@ public class AdminController {
     }
 
     // Not : delete() **********************************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}") // admins/delete/1
     public ResponseEntity<String> deleteAdminById(@PathVariable Long id){
 
