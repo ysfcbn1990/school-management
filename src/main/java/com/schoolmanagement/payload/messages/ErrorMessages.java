@@ -27,4 +27,15 @@ public class ErrorMessages {
     public static final String ROLE_ALREADY_EXIST="Error:Role already exist in DB";
 
 
+
+
+ public static final String EDUCATION_START_DATE_IS_EARLIER_THAN_LAST_REGISTRATION_DATE = "Error: The start date cannot be earlier than the last registration date";
+
+ public static final String EDUCATION_END_DATE_IS_EARLIER_THAN_START_DATE = "Error: The end date cannot be earlier than the start date";
+
+ public static final String EDUCATION_TERM_IS_ALREADY_EXIST_BY_TERM_AND_YEAR = "Error: Education Term with Term and Year already exist ";
+
+
+
+
 }
