@@ -35,7 +35,15 @@ public class ErrorMessages {
 
  public static final String EDUCATION_TERM_IS_ALREADY_EXIST_BY_TERM_AND_YEAR = "Error: Education Term with Term and Year already exist ";
 
-
  public static final String EDUCATION_TERM_NOT_FOUND_MESSAGE = "Error: Education term not found with id %s";
+
+
+
+ public static final String LESSON_ALREADY_EXIST = "Error: Lesson is exist with Lesson Name %s";
+
+ public static final String NOT_FOUND_LESSON_MESSAGE = "Error: Lesson not found with id %s";
+
+
+
 
 }
