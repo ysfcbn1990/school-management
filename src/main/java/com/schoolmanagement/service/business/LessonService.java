@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,9 +98,11 @@ public class LessonService {
     }
 
     // Not: getLessonsByIdList() *******************************************************************
-    public Set<Lesson> getLessonByLessonIdSet(Set<Long> lessons) {
+    public Set<Lesson> getLessonByLessonIdSet(Set<Long> idSet) {
 
-        // TODO : id kontrol gerekiyor
-        return lessonRepository.getLessonByLessonIdList(lessons);
+        return idSet.stream()
+                .map(this::isLessonExistById)
+                .collect(Collectors.toSet());
+       // return lessonRepository.getLessonByLessonIdList(lessons);
     }
 }

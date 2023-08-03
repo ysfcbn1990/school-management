@@ -135,4 +135,11 @@ public class EducationTermService {
 
     }
 
+    // Not: LessonProgramService için yazıldı
+    public EducationTerm getEducationTermById(Long id){
+        return isEducationTermExist(id);
+    }
+
+
+
 }
