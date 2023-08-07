@@ -7,12 +7,14 @@ import com.schoolmanagement.exception.ResourceNotFoundException;
 import com.schoolmanagement.payload.mappers.TeacherMapper;
 import com.schoolmanagement.payload.messages.ErrorMessages;
 import com.schoolmanagement.payload.messages.SuccessMessages;
+import com.schoolmanagement.payload.request.ChooseLessonTeacherRequest;
 import com.schoolmanagement.payload.request.TeacherRequest;
 import com.schoolmanagement.payload.response.ResponseMessage;
 import com.schoolmanagement.payload.response.TeacherResponse;
 import com.schoolmanagement.repository.user.TeacherRepository;
 import com.schoolmanagement.service.business.LessonProgramService;
 import com.schoolmanagement.service.helper.PageableHelper;
+import com.schoolmanagement.service.validator.DateTimeValidator;
 import com.schoolmanagement.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,6 +38,7 @@ public class TeacherService {
     private final  UserRoleService userRoleService ;
     private final PasswordEncoder passwordEncoder;
     private final PageableHelper pageableHelper;
+    private final DateTimeValidator dateTimeValidator;
 
     // Not :  Save() *********************************************************
     public ResponseMessage<TeacherResponse> saveTeacher(TeacherRequest teacherRequest) {
@@ -142,6 +145,29 @@ public class TeacherService {
                 .message(SuccessMessages.TEACHER_UPDATE)
                 .httpStatus(HttpStatus.OK)
                 .object(teacherMapper.mapTeacherToTeacherResponse(savedTeacher))
+                .build();
+    }
+
+    // Not: addLessonProgramsToTeachersLessonsProgram() **********************************
+    public ResponseMessage<TeacherResponse> chooseLesson(ChooseLessonTeacherRequest chooseLessonTeacherRequest) {
+        //!!! Teacher kontrolu
+        Teacher teacher =  isTeacherExist(chooseLessonTeacherRequest.getTeacherId());
+        // !!! requestten gelen lessonProgram kontrolu
+        Set<LessonProgram> lessonPrograms = lessonProgramService.getLessonProgramById(chooseLessonTeacherRequest.getLessonProgramId());
+        // !!! teacherin mevcut ders programini aliyoruz
+        Set<LessonProgram> teachersLessonProgram =  teacher.getLessonsProgramList();
+
+        // LessonProgram cakisma kontrolu
+        dateTimeValidator.checkLessonPrograms(teachersLessonProgram, lessonPrograms);
+        teachersLessonProgram.addAll(lessonPrograms);
+        teacher.setLessonsProgramList(teachersLessonProgram);
+
+        Teacher updatedTeacher = teacherRepository.save(teacher);
+
+        return ResponseMessage.<TeacherResponse>builder()
+                .message(SuccessMessages.LESSON_PROGRAM_ADD_TO_TEACHER)
+                .httpStatus(HttpStatus.OK)
+                .object(teacherMapper.mapTeacherToTeacherResponse(updatedTeacher))
                 .build();
     }
 }
