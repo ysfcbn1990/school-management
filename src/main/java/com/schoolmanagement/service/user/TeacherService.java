@@ -12,6 +12,7 @@ import com.schoolmanagement.payload.request.TeacherRequest;
 import com.schoolmanagement.payload.response.ResponseMessage;
 import com.schoolmanagement.payload.response.TeacherResponse;
 import com.schoolmanagement.repository.user.TeacherRepository;
+import com.schoolmanagement.service.business.AdvisoryTeacherService;
 import com.schoolmanagement.service.business.LessonProgramService;
 import com.schoolmanagement.service.helper.PageableHelper;
 import com.schoolmanagement.service.validator.DateTimeValidator;
@@ -39,6 +40,7 @@ public class TeacherService {
     private final PasswordEncoder passwordEncoder;
     private final PageableHelper pageableHelper;
     private final DateTimeValidator dateTimeValidator;
+    private final AdvisoryTeacherService advisoryTeacherService;
 
     // Not :  Save() *********************************************************
     public ResponseMessage<TeacherResponse> saveTeacher(TeacherRequest teacherRequest) {
@@ -57,7 +59,9 @@ public class TeacherService {
 
         Teacher savedTeacher =  teacherRepository.save(teacher);
 
-        // TODO : AdvisorTeacher Servise yazilinca eklenecek
+      if(teacherRequest.isAdvisorTeacher()){
+          advisoryTeacherService.saveAdvisoryTeacher(teacher);
+      }
 
         return ResponseMessage.<TeacherResponse>builder()
                 .message(SuccessMessages.TEACHER_SAVE)
@@ -139,7 +143,7 @@ public class TeacherService {
 
         Teacher savedTeacher = teacherRepository.save(updatedTeacher);
 
-        // TODO : Advisory Teacher
+        advisoryTeacherService.updateAdvisoryTeacher(teacherRequest.isAdvisorTeacher(),savedTeacher);
 
         return ResponseMessage.<TeacherResponse>builder()
                 .message(SuccessMessages.TEACHER_UPDATE)

@@ -63,8 +63,14 @@ public class SuccessMessages {
 
     public static final String LESSON_PROGRAM_ADD_TO_TEACHER = "Lesson Programs added to Teacher Successfully";
 
-
+   //!!AdvisoryTeacher
     public static final String ADVISOR_TEACHER_DELETE = "Advisor Teacher is Deleted Successfully";
 
+//!!Student
+    public static final String STUDENT_SAVE = "Student is Saved Successfully";
+
+    public static final String STUDENT_UPDATE = "Student is Updated Successfully";
+
+    public static final String STUDENT_DELETE = "Student is Deleted Successfully";
 
 }
