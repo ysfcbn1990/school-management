@@ -73,4 +73,6 @@ public class SuccessMessages {
 
     public static final String STUDENT_DELETE = "Student is Deleted Successfully";
 
+    public static final String LESSON_PROGRAM_ADD_TO_STUDENT = "Lesson Program added to Student Successfully";
+
 }

@@ -1,6 +1,7 @@
 package com.schoolmanagement.repository.user;
 
 import com.schoolmanagement.entity.concretes.user.Student;
+import com.schoolmanagement.payload.response.StudentResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -26,4 +27,7 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
 
 
 List<Student> getStudentByNameContaining(String studentName);
+
+    @Query(value = "SELECT s FROM Student s WHERE s.advisoryTeacher.teacher.username =:username")
+    List<Student> getStudentByAdvisoryTeacher_Username(String username);
 }

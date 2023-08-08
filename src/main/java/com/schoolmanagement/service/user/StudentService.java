@@ -1,5 +1,6 @@
 package com.schoolmanagement.service.user;
 
+import com.schoolmanagement.entity.concretes.business.LessonProgram;
 import com.schoolmanagement.entity.concretes.user.AdvisoryTeacher;
 import com.schoolmanagement.entity.concretes.user.Student;
 import com.schoolmanagement.entity.enums.RoleType;
@@ -7,18 +8,25 @@ import com.schoolmanagement.exception.ResourceNotFoundException;
 import com.schoolmanagement.payload.mappers.StudentMapper;
 import com.schoolmanagement.payload.messages.ErrorMessages;
 import com.schoolmanagement.payload.messages.SuccessMessages;
+import com.schoolmanagement.payload.request.ChooseLessonProgramWithId;
 import com.schoolmanagement.payload.request.StudentRequest;
 import com.schoolmanagement.payload.response.ResponseMessage;
 import com.schoolmanagement.payload.response.StudentResponse;
 import com.schoolmanagement.repository.user.StudentRepository;
 import com.schoolmanagement.service.business.AdvisoryTeacherService;
+import com.schoolmanagement.service.business.LessonProgramService;
+import com.schoolmanagement.service.helper.PageableHelper;
+import com.schoolmanagement.service.validator.DateTimeValidator;
 import com.schoolmanagement.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +38,9 @@ public class StudentService {
     private final StudentMapper studentMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRoleService userRoleService;
+    private final PageableHelper pageableHelper;
+    private final LessonProgramService lessonProgramService;
+    private final DateTimeValidator dateTimeValidator;
 
 
 
@@ -141,4 +152,55 @@ public class StudentService {
                 .map(studentMapper::mapStudentToStudentResponse)
                 .collect(Collectors.toList());
     }
+
+    // Not: getAllWithPage ***********************************************************
+    public Page<StudentResponse> getAllStudentByPage(int page, int size, String sort, String type) {
+
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        return studentRepository.findAll(pageable).map(studentMapper::mapStudentToStudentResponse);
+    }
+
+    public Student getStudentById(Long id) {
+
+        return isStudentExist(id);
+    }
+
+
+    // Not: GetAllByAdvisoryTeacherUserName() ************************************************
+    public List<StudentResponse> getAllByAdvisoryTeacherUserName(String advisoryTeacherUserName) {
+
+        return studentRepository.getStudentByAdvisoryTeacher_Username(advisoryTeacherUserName)
+                .stream()
+                .map(studentMapper::mapStudentToStudentResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    // Not: addLessonProgramToStudentLessonsProgram() *************************
+    public ResponseMessage<StudentResponse> chooseLesson(String userName, ChooseLessonProgramWithId chooseLessonProgramWithId) {
+        Student student = isStudentExistByUsername(userName);
+        Set<LessonProgram> lessonProgramSet = lessonProgramService.getLessonProgramById(chooseLessonProgramWithId.getLessonProgramId());
+        Set<LessonProgram> studentCurrentLessonProgram = student.getLessonsProgramList();
+        dateTimeValidator.checkLessonPrograms(studentCurrentLessonProgram,lessonProgramSet);
+        studentCurrentLessonProgram.addAll(lessonProgramSet);
+        student.setLessonsProgramList(studentCurrentLessonProgram);
+        Student savedStudent = studentRepository.save(student);
+
+        return ResponseMessage.<StudentResponse>builder()
+                .message(SuccessMessages.LESSON_PROGRAM_ADD_TO_STUDENT)
+                .object(studentMapper.mapStudentToStudentResponse(savedStudent))
+                .httpStatus(HttpStatus.OK)
+                .build();
+
+    }
+    public  Student isStudentExistByUsername(String username){
+        Student student = studentRepository.findByUsernameEquals(username);
+        if(student.getId()==null){
+            throw  new ResourceNotFoundException(ErrorMessages.NOT_FOUND_USER_MESSAGE);
+        }
+        return  student;
+    }
+
+
 }

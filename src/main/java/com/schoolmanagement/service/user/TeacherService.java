@@ -174,4 +174,12 @@ public class TeacherService {
                 .object(teacherMapper.mapTeacherToTeacherResponse(updatedTeacher))
                 .build();
     }
+
+    // Not: StudentInfoService icin yazildi***************************************
+    public Teacher getTeacherByUsername(String username) {
+        if(!teacherRepository.existsByUsername(username)){
+            throw  new ResourceNotFoundException(ErrorMessages.NOT_FOUND_USER_MESSAGE);
+        }
+        return teacherRepository.getTeacherByUsername(username);
+    }
 }

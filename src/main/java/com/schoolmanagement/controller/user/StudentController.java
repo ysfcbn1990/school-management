@@ -1,13 +1,17 @@
 package com.schoolmanagement.controller.user;
 
+import com.schoolmanagement.entity.concretes.user.Student;
+import com.schoolmanagement.payload.request.ChooseLessonProgramWithId;
 import com.schoolmanagement.payload.request.StudentRequest;
 import com.schoolmanagement.payload.response.ResponseMessage;
 import com.schoolmanagement.payload.response.StudentResponse;
 import com.schoolmanagement.service.user.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -62,6 +66,47 @@ public class StudentController {
         return studentService.findStudentByName(studentName);
     }
 
+    // Not: getAllWithPage ***********************************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    @GetMapping("/getAllStudentByPage")  // http://localhost:8080/students/getAllStudentByPage +  GET
+    public Page<StudentResponse> getAllStudentByPage(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size,
+            @RequestParam(value = "sort") String sort,
+            @RequestParam(value = "type") String type
+    ){
+        return studentService.getAllStudentByPage(page,size,sort,type);
+    }
+
+
+    // Not : getById() ********************************************************
+    // Todo : DONEN DEGERIN dto OLMASI GEREKIYOR
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    @GetMapping("/getStudentById")  // http://localhost:8080/students/getStudentById +  GET
+    public Student getStudentById(@RequestParam(name = "id") Long id) {
+        return studentService.getStudentById(id);
+    }
+
+    // Not: GetAllByAdvisoryTeacherUserName() ************************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN','TEACHER')")
+    @GetMapping("/getAllByAdvisorId")  // http://localhost:8080/students/getAllByAdvisorId +  GET
+    public List<StudentResponse> getAllByAdvisoryTeacherUserName(HttpServletRequest request){
+        String userName = request.getHeader("username");
+        return studentService.getAllByAdvisoryTeacherUserName(userName);
+
+    }
+
+    // Not: addLessonProgramToStudentLessonsProgram() *************************
+    @PreAuthorize("hasAnyAuthority('STUDENT')")
+    @PostMapping("/chooseLesson")  // http://localhost:8080/students/chooseLesson +  POST
+    public ResponseMessage<StudentResponse> chooseLesson(HttpServletRequest request,
+                                                         @RequestBody @Valid ChooseLessonProgramWithId chooseLessonProgramWithId){
+
+        String userName = (String) request.getAttribute("username");
+
+        return studentService.chooseLesson(userName,chooseLessonProgramWithId);
+
+    }
 
 
 }
