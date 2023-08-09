@@ -57,4 +57,11 @@ public class ErrorMessages {
 
 
  public static final String NOT_FOUND_ADVISOR_MESSAGE = "Error: Advisor Teacher not found with id %s";
+
+ public static final String STUDENT_INFO_NOT_FOUND = "Error: Student info with id %d not found";
+
+ public static final String STUDENT_INFO_NOT_FOUND_BY_STUDENT_ID = "Error: Student info with student id %d not found";
+
+
+
 }
